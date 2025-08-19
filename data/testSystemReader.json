@@ -1,0 +1,59 @@
+{
+    "locations": [
+        {
+            "location": "ANGU",
+            "maxcapacity": 10,
+            "nextid": 0,
+            "vehicles": []
+        },
+        {
+            "location": "SWNG",
+            "maxcapacity": 2,
+            "nextid": 1,
+            "vehicles": [
+                {
+                    "id": 0,
+                    "type": "Car",
+                    "rentalrate": 10,
+                    "available": true,
+                    "location": "SWNG",
+                    "rentalhistory": []
+                }
+            ]
+        },
+        {
+            "location": "Osborne",
+            "maxcapacity": 5,
+            "nextid": 3,
+            "vehicles": [
+                {
+                    "id": 0,
+                    "type": "Bus",
+                    "rentalrate": 20,
+                    "available": true,
+                    "location": "Osborne",
+                    "rentalhistory": [
+                        {
+                            "name": "Julia"
+                        },
+                        {
+                            "name": "Mark"
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "type": "Bike",
+                    "rentalrate": 5,
+                    "available": false,
+                    "location": "Osborne",
+                    "rentalhistory": [
+                        {
+                            "name": "Sam"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

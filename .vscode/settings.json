@@ -1,0 +1,4 @@
+{
+    "java.checkstyle.version": "10.2",
+    "java.checkstyle.configuration": "${workspaceFolder}/ProjectStarter/checkstyle.xml"
+}
