@@ -2,8 +2,9 @@ package persistence;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -13,13 +14,13 @@ import model.Vehicle;
 
 class JsonWriterTest extends JsonTest {
     @Test
-    void testWriteNotExistantFile() {
+    void testWriteUnwritableFile() {
         try {
             RentalSystem testSystem = new RentalSystem();
-            JsonWriter testWriter = new JsonWriter(".data/fileDoesNotExist.json");
+            JsonWriter testWriter = new JsonWriter("./data/file\0:can't:open.json");
             testWriter.open();
-            fail("Expected IOException to be thrown");
-        } catch (IOException e) {
+            fail("Expected FileNotFoundException to be thrown");
+        } catch (FileNotFoundException e) {
             // this is expected. 
         }
     }
@@ -28,12 +29,12 @@ class JsonWriterTest extends JsonTest {
     void testWriteEmptySystem() {
         try {
             RentalSystem testSystem = new RentalSystem();
-            JsonWriter testWriter = new JsonWriter(".data/testEmptySystemWriter.json");
+            JsonWriter testWriter = new JsonWriter("./data/testEmptySystemWriter.json");
             testWriter.open();
             testWriter.writeSystem(testSystem);
             testWriter.close();
 
-            JsonReader testReader = new JsonReader(".data/testEmptySystemWriter.json");
+            JsonReader testReader = new JsonReader("./data/testEmptySystemWriter.json");
             RentalSystem readSystem = testReader.read();
 
             assertEquals(readSystem.getLocations().size(), 0);
@@ -47,49 +48,27 @@ class JsonWriterTest extends JsonTest {
     void testWriteExampleSystem() {
         try {
             RentalSystem actualSystem = prepareSystem();
-            JsonWriter testWriter = new JsonWriter(".data/testSystemWriter.json");
+            JsonWriter testWriter = new JsonWriter("./data/testSystemWriter.json");
             testWriter.open();
             testWriter.writeSystem(actualSystem);
             testWriter.close();
 
-            JsonReader testReader = new JsonReader(".data/testSystemWriter.json");
+            JsonReader testReader = new JsonReader("./data/testSystemWriter.json");
             RentalSystem testSystem = testReader.read();
 
             assertEquals(testSystem.getLocations().size(), 3);
 
-            // First Location
-            ArrayList<Vehicle> expectedVehicles = new ArrayList<Vehicle>();
+            List<Vehicle> expectedVehicles = actualSystem.getLocations().get(0).getVehicles();
             RentalLocation testLocation = testSystem.getLocations().get(0);
             checkLocation("The Nest", 3, 0, expectedVehicles, testLocation);
             
-            expectedVehicles = new ArrayList<Vehicle>();
-            Vehicle testVehicle = new Vehicle(0, "Skateboard", 2, "LSK");
-            testVehicle.rent("Joe");
-            testVehicle.returnVehicle();
-            expectedVehicles.add(testVehicle);
-            testVehicle = new Vehicle(0, "Roller Skates", 3, "LSK");
-            testVehicle.rent("Maya");
-            expectedVehicles.add(testVehicle);
+            expectedVehicles = actualSystem.getLocations().get(1).getVehicles();
             testLocation = testSystem.getLocations().get(1);
             checkLocation("LSK", 7, 2, expectedVehicles, testLocation);
 
-            expectedVehicles = new ArrayList<Vehicle>();
-
-            testVehicle = new Vehicle(0, "eBike",10, "Hebb");
-            testVehicle.rent("Skyler");
-            testVehicle.returnVehicle();
-            testVehicle.rent("Coryo");
-            testVehicle.returnVehicle();
-            testVehicle.rent("Lisa");
-            expectedVehicles.add(testVehicle);
-            
-            testVehicle = new Vehicle(4, "Scooter", 8, "Hebb");
-            testVehicle.rent("Barley");
-            testVehicle.returnVehicle();
-            expectedVehicles.add(testVehicle);
-
+            expectedVehicles =  actualSystem.getLocations().get(2).getVehicles();
             testLocation = testSystem.getLocations().get(2);
-            checkLocation("Hebb", 5, 5, expectedVehicles, testLocation);
+            checkLocation("Hebb", 5, 4, expectedVehicles, testLocation);
         } catch (IOException e) {
             fail("File could not be read (IOexception).");
         }

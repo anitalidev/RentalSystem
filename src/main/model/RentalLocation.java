@@ -16,40 +16,62 @@ public class RentalLocation implements Writable {
     private int nextID;
     private List<Vehicle> vehicles;
 
-    // EFFECTS: constructs a rental location at the given location with given max capacity,
-    //          0 current capacity, next vehicle ID of 0, and no vehicles.
+    // EFFECTS: constructs a rental location at the given location with given max capacity, next vehicle ID of 0, 
+    //          and no vehicles.
     public RentalLocation(String location, int maxCapacity) {
         this.location = location;
         this.maxCapacity = maxCapacity;
         nextID = 0;
         vehicles = new ArrayList<Vehicle>();
-
+        EventLog.getInstance().logEvent(new Event("Created new Rental Location: " + location));
     }
 
     // MODIFIES: this
-    // EFFECTS: IF current capacity < max capacity, creates new vehicle with next vehicle ID, and given parameters.
-    //             Adds one to current capacity, increments next ID, and adds created vehicle to list of vehicles. 
-    //             Returns assigned ID
+    // EFFECTS: IF hasSpace(), creates new vehicle with next vehicle ID, and given parameters.
+    //             Increments next ID, and adds created vehicle to list of vehicles. Returns assigned ID
     //          OTHERWISE returns -1    
     public int addVehicle(String type, int rentalRate) {
         if (hasSpace()) {
             Vehicle newVehicle = new Vehicle(nextID, type, rentalRate, location);
             nextID++;
             vehicles.add(newVehicle);
+            EventLog.getInstance().logEvent(new Event("Vehicle of type: " + type + ", and ID: "
+                    + (nextID - 1) + " added to " + location));
             return nextID - 1;
         } else {
             return -1;
         }
     }
 
+    // REQUIRES: vehicle.getLocation() == location 
+    //           AND vehicle ID is not identical to that of any vehicle in list of vehicle
     // MODIFIES: this
-    // EFFECTS: IF vehicle with given id is in list, removes vehicle from list of vehicles,
-    //          subtracts one from current capacity, and returns true. OTHERWISE returns false
+    // EFFECTS: IF hasSpace(), adds vehicle to list of vehicles. 
+    //             IF nextID is less than the given vehicle's ID, sets it to one more than the given vehicle's ID.
+    //          Returns whether vehicle was added.
+    public boolean addVehicle(Vehicle vehicle) {
+        if (hasSpace()) {
+            vehicles.add(vehicle);
+            if (vehicle.getID() >= nextID) {
+                nextID = vehicle.getID() + 1;
+            }
+            EventLog.getInstance().logEvent(new Event("Vehicle of type: " + vehicle.getType() + ", and ID: "
+                    + vehicle.getID() + " added to " + location));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: IF vehicle with given id is in list, removes vehicle from list of vehicles, and returns true. 
+    //          OTHERWISE returns false
     public boolean removeVehicle(int id) {
         int size = vehicles.size();
         for (int i = 0; i < size; i++) {
             if (vehicles.get(i).getID() == id) {
                 vehicles.remove(i);
+                EventLog.getInstance().logEvent(new Event("Vehicle of id: " + id + " removed from " + location));
                 return true;
             }
         }
@@ -110,7 +132,7 @@ public class RentalLocation implements Writable {
         this.location = location;
     }
 
-    // REQUIRES: currentCapacity <= maxCapacity
+    // REQUIRES: vehicles.size() <= maxCapacity
     // MODIFIES: this
     // EFFECTS: sets the rental location's max capacity to the new, given max capacity
     public void setMaxCapacity(int maxCapacity) {

@@ -18,7 +18,6 @@ public class TestRentalLocation {
         testLocation2 = new RentalLocation("SCARFE", 2);
     }
 
-
     @Test
     void testConstructor() {
         assertEquals(testLocation1.getLocation(), "ICCS");
@@ -76,6 +75,81 @@ public class TestRentalLocation {
         assertEquals(testLocation2.getCurrentCapacity(), 2);
         assertEquals(testLocation2.getMaxCapacity(), 2);
         assertEquals(testLocation2.getNextID(), 2);
+    }
+
+    @Test
+    void testAddVehicle2() {
+        Vehicle testVehicle = new Vehicle(0, "Bus", 35, "ICCS");
+
+        assertTrue(testLocation1.addVehicle(testVehicle));
+        assertEquals(testLocation1.getNextID(), 1);
+        assertEquals(testLocation1.getVehicles().size(), 1);
+        assertEquals(testLocation1.getVehicles().get(0).getType(), "Bus");
+        assertEquals(testLocation1.getVehicles().get(0).getID(), 0);
+        assertEquals(testLocation1.getVehicles().get(0).getRentalRate(), 35);
+        assertEquals(testLocation1.getCurrentCapacity(), 1);
+        assertEquals(testLocation1.getMaxCapacity(), 10);
+    }
+
+    @Test
+    void testAddMultipleVehicle2() {
+        Vehicle testVehicle = new Vehicle(0, "Bus", 35, "ICCS");
+        Vehicle testVehicle2 = new Vehicle(3, "SUV", 22, "ICCS");
+        Vehicle testVehicle3 = new Vehicle(2, "Car", 11, "ICCS");
+
+        assertTrue(testLocation1.addVehicle(testVehicle));
+        assertEquals(testLocation1.getNextID(), 1);
+        assertEquals(testLocation1.getVehicles().size(), 1);
+        assertTrue(checkVehicle(testLocation1.getVehicles().get(0), testVehicle));
+        assertEquals(testLocation1.getCurrentCapacity(), 1);
+
+        assertTrue(testLocation1.addVehicle(testVehicle2));
+        assertEquals(testLocation1.getNextID(), 4);
+        assertEquals(testLocation1.getVehicles().size(), 2);
+        assertTrue(checkVehicle(testLocation1.getVehicles().get(1), testVehicle2));
+        assertEquals(testLocation1.getMaxCapacity(), 10);
+
+        assertTrue(testLocation1.addVehicle(testVehicle3));
+        assertEquals(testLocation1.getNextID(), 4);
+        assertEquals(testLocation1.getVehicles().size(), 3);
+        assertTrue(checkVehicle(testLocation1.getVehicles().get(2), testVehicle3));
+        assertEquals(testLocation1.getMaxCapacity(), 10);
+    }
+
+    private boolean checkVehicle(Vehicle vehicle, Vehicle correct) {
+        if (vehicle.getType() != correct.getType()) {
+            return false;
+        } else if (vehicle.getID() != correct.getID()) {
+            return false;
+        } else if (vehicle.getRentalRate() != correct.getRentalRate()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Test
+    void testAddVehicleOverflow2() {
+        Vehicle testVehicle = new Vehicle(0, "Bus", 35, "ICCS");
+        Vehicle testVehicle2 = new Vehicle(3, "SUV", 22, "ICCS");
+        Vehicle testVehicle3 = new Vehicle(2, "Car", 11, "ICCS");
+
+        assertTrue(testLocation2.addVehicle(testVehicle));
+        assertTrue(testLocation2.addVehicle(testVehicle3));
+        assertFalse(testLocation2.addVehicle(testVehicle2));
+        
+        assertEquals(testLocation2.getVehicles().get(0).getType(), "Bus");
+        assertEquals(testLocation2.getVehicles().get(0).getID(), 0);
+        assertEquals(testLocation2.getVehicles().get(0).getRentalRate(), 35);
+
+        assertEquals(testLocation2.getVehicles().get(1).getType(), "Car");
+        assertEquals(testLocation2.getVehicles().get(1).getID(), 2);
+        assertEquals(testLocation2.getVehicles().get(1).getRentalRate(), 11);
+
+        assertEquals(testLocation2.getNextID(), 3);
+        assertEquals(testLocation2.getVehicles().size(), 2);
+        assertEquals(testLocation2.getCurrentCapacity(), 2);
+        assertEquals(testLocation2.getMaxCapacity(), 2);
     }
 
     @Test

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -50,7 +48,7 @@ public class JsonReader {
     private RentalSystem parseSystem(JSONObject jsonObject) {
         RentalSystem system = new RentalSystem();
 
-        JSONArray locations =jsonObject.getJSONArray("locations");
+        JSONArray locations = jsonObject.getJSONArray("locations");
         int size = locations.length();
         for (int i = 0; i < size; i++) {
             addLocation(system, locations.getJSONObject(i));
@@ -72,6 +70,7 @@ public class JsonReader {
 
         rentalLocation.setNextID(nextid);
         
+        system.addLocation(rentalLocation);
     }
 
     // MODIFIES: location
@@ -90,24 +89,38 @@ public class JsonReader {
         String type = jsonObject.getString("type");
         int rentalRate = jsonObject.getInt("rentalrate");
         boolean available = jsonObject.getBoolean("available");
-        String sLocation = jsonObject.getString("location");
+        String locationName = jsonObject.getString("location");
 
-        Vehicle vehicle = new Vehicle(id, type, rentalRate, sLocation);
+        Vehicle vehicle = new Vehicle(id, type, rentalRate, locationName);
+
+        location.addVehicle(vehicle);
 
         addHistory(vehicle, jsonObject.getJSONArray("rentalhistory"));
 
         if (available) {
             vehicle.returnVehicle();
         }
-        else {
-            vehicle.makeUnavailable();
-        }
-
     }
 
     // MODIFIES: vehicle
     // EFFECTS: Parses names from JSON Array and adds them to given vehicle's rental history
     private void addHistory(Vehicle vehicle, JSONArray jsonArray) {
+        int size = jsonArray.length();
+
+        if (size == 0) {
+            return;
+        } 
+        
+        vehicle.rent(jsonArray.getString(0));
+        
+        if (size == 1) {
+            return;
+        }
+
+        for (int i = 1; i < size; i++) {
+            vehicle.returnVehicle();
+            vehicle.rent(jsonArray.getString(i));
+        }
 
     }
 }

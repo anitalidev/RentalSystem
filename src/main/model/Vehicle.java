@@ -33,6 +33,7 @@ public class Vehicle implements Writable {
     // MODIFIES: this
     // EFFECTS: adds name of renter to end of rental history and set availability to false
     public void rent(String name) {
+        EventLog.getInstance().logEvent(new Event("Vehicle with ID: " + id + " at " + location + " rented by " + name));
         rentalHistory.add(name);
         available = false;
     }
@@ -41,6 +42,7 @@ public class Vehicle implements Writable {
     // EFFECTS: sets availability to true
     public void returnVehicle() {
         available = true;
+        EventLog.getInstance().logEvent(new Event("Vehicle with ID: " + id + " at " + location + " returned"));
     }
 
     // EFFECTS: returns cost to rent vehicle for given time (hours)

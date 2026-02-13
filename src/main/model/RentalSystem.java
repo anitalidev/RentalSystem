@@ -15,6 +15,8 @@ public class RentalSystem implements Writable {
 
     // EFFECTS: Constructs a rental system with no locations
     public RentalSystem() {
+        EventLog.getInstance().logEvent(new Event("Rental System created"));
+
         locations = new ArrayList<RentalLocation>();
     }
 
@@ -29,6 +31,8 @@ public class RentalSystem implements Writable {
     // MODIFIES: this
     // EFFECTS: removes rental location at given index in list of rental locations
     public void removeLocation(int locationIndex) {
+        EventLog.getInstance().logEvent(new Event("Location at " + locations.get(locationIndex).getLocation()
+                                        + " removed"));
         locations.remove(locationIndex);
     }
 

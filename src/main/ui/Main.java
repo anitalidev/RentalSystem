@@ -1,7 +1,11 @@
 package ui;
 
 public class Main {
+
+    private static RentalApp app;
+    
     public static void main(String[] args) {
-        new RentalApp(); 
+        app = new RentalApp(); 
+        app.runApp();
     }
 }

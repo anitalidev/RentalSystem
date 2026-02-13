@@ -1,0 +1,58 @@
+{"locations": [
+    {
+        "nextid": 0,
+        "maxcapacity": 3,
+        "vehicles": [],
+        "location": "The Nest"
+    },
+    {
+        "nextid": 2,
+        "maxcapacity": 7,
+        "vehicles": [
+            {
+                "rentalrate": 2,
+                "available": true,
+                "rentalhistory": ["Joe"],
+                "location": "LSK",
+                "id": 0,
+                "type": "Skateboard"
+            },
+            {
+                "rentalrate": 3,
+                "available": false,
+                "rentalhistory": ["Maya"],
+                "location": "LSK",
+                "id": 1,
+                "type": "Roller Skates"
+            }
+        ],
+        "location": "LSK"
+    },
+    {
+        "nextid": 4,
+        "maxcapacity": 5,
+        "vehicles": [
+            {
+                "rentalrate": 10,
+                "available": false,
+                "rentalhistory": [
+                    "Skyler",
+                    "Coryo",
+                    "Lisa"
+                ],
+                "location": "Hebb",
+                "id": 0,
+                "type": "eBike"
+            },
+            {
+                "rentalrate": 8,
+                "available": true,
+                "rentalhistory": ["Barley"],
+                "location": "Hebb",
+                "id": 3,
+                "type": "Scooter"
+            }
+        ],
+        "location": "Hebb"
+    }
+]}
